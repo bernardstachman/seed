@@ -3,7 +3,8 @@ var gulp = require('gulp'),
 	gutil = require('gulp-util'),
 	concat = require('gulp-concat'),
 	browserify = require('gulp-browserify'),
-	connect = require('gulp-connect');
+	connect = require('gulp-connect'),
+	gulpif = require('gulp-if');
 
 //Declare variables
 var env,
@@ -32,6 +33,7 @@ htmlSrc = [outputDir + '*.html'];
 //Process HTML
 gulp.task('html', function() {
 	gulp.src(htmlSrc)
+		.pipe(gulp.dest(outputDir))  //Place in dev folder	
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
 
@@ -39,6 +41,7 @@ gulp.task('html', function() {
 gulp.task('json', function() {
 	gulp.src(dataSrc)
 		.pipe(connect.reload())
+		.pipe(gulp.dest(outputDir + '/js/data'))  //Place in dev folder
 });
 
 //Process JavaScript
