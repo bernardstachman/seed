@@ -4,7 +4,9 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	browserify = require('gulp-browserify'),
 	connect = require('gulp-connect'),
-	gulpif = require('gulp-if');
+	gulpif = require('gulp-if'),
+	uglify = require('gulp-uglify'),
+	minifyHTML = require('gulp-minify-html');
 
 //Declare variables
 var env,
@@ -25,7 +27,7 @@ if (env === 'dev') { //If env = def, we are in dev mode
 // [Define sources]
 jsSrc = ['components/scripts/*.js'];
 dataSrc = ['componenets/data/*.json'];
-htmlSrc = [outputDir + '*.html'];
+htmlSrc = ['builds/dev/*.html'];
 
 
 // [Gulp tasks]
@@ -33,7 +35,8 @@ htmlSrc = [outputDir + '*.html'];
 //Process HTML
 gulp.task('html', function() {
 	gulp.src(htmlSrc)
-		.pipe(gulp.dest(outputDir))  //Place in dev folder	
+		.pipe(gulpif(env === 'production', minifyHTML()))  //If in production, minify...
+		.pipe(gulpif(env === 'production', gulp.dest(outputDir)))  //then place in production folder
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
 
@@ -49,6 +52,7 @@ gulp.task('js', function() {
 	gulp.src(jsSrc)
 		.pipe(concat('script.js'))  //Combine all scripts into script.js
 		.pipe(browserify())  //Inject required technologies
+		.pipe(gulpif(env === 'production', uglify()))
 		.pipe(gulp.dest(outputDir + '/js'))  //Place in dev folder
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
