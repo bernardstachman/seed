@@ -5,7 +5,8 @@ var gulp = require('gulp'),
 	browserify = require('gulp-browserify'),
 	connect = require('gulp-connect'),
 	gulpif = require('gulp-if'),
-	uglify = require('gulp-uglify'),
+	uglify = require('gulp-uglify')
+	minifyJSON = require('gulp-jsonminify'),
 	minifyHTML = require('gulp-minify-html');
 
 //Declare variables
@@ -43,8 +44,9 @@ gulp.task('html', function() {
 //Process JSON data
 gulp.task('json', function() {
 	gulp.src(dataSrc)
-		.pipe(connect.reload())
+		.pipe(gulpif(env === 'production', minifyJSON()))  //If in production, minify
 		.pipe(gulp.dest(outputDir + '/js/data'))  //Place in dev folder
+		.pipe(connect.reload())
 });
 
 //Process JavaScript

@@ -11,3 +11,5 @@ My seed project for future AngularJS web app development utilizing a gulp powere
 5. gulp-if
 6. gulp-uglify
 7. gulp-html-minify
+8. gulp-jsonminify
+
