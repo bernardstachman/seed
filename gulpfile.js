@@ -26,10 +26,11 @@ if (env === 'dev') { //If env = def, we are in dev mode
 }
 
 // [Define sources]
-jsSrc = ['components/scripts/*.js'];
+jsSrc = ['components/scripts/*.js', 'components/scripts/**/*.js'];
 dataSrc = ['componenets/data/*.json'];
 htmlSrc = ['builds/dev/*.html'];
-
+viewsSrc = ['builds/dev/views/*.html'];
+cssSrc = ['builds/dev/css/*.css'];
 
 // [Gulp tasks]
 
@@ -37,7 +38,15 @@ htmlSrc = ['builds/dev/*.html'];
 gulp.task('html', function() {
 	gulp.src(htmlSrc)
 		.pipe(gulpif(env === 'production', minifyHTML()))  //If in production, minify...
-		.pipe(gulpif(env === 'production', gulp.dest(outputDir)))  //then place in production folder
+		.pipe(gulp.dest(outputDir))  //Place in output dir
+		.pipe(connect.reload())  //Reload page to reflect changes
+});
+
+//Process views
+gulp.task('views', function() {
+	gulp.src(viewsSrc)
+		.pipe(gulpif(env === 'production', minifyHTML()))  //If in production, minify...
+		.pipe(gulp.dest(outputDir + '/views'))  //Place in production folder
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
 
@@ -45,7 +54,7 @@ gulp.task('html', function() {
 gulp.task('json', function() {
 	gulp.src(dataSrc)
 		.pipe(gulpif(env === 'production', minifyJSON()))  //If in production, minify
-		.pipe(gulp.dest(outputDir + '/js/data'))  //Place in dev folder
+		.pipe(gulp.dest(outputDir + '/js/data'))  //Place in output dir
 		.pipe(connect.reload())
 });
 
@@ -54,16 +63,25 @@ gulp.task('js', function() {
 	gulp.src(jsSrc)
 		.pipe(concat('script.js'))  //Combine all scripts into script.js
 		.pipe(browserify())  //Inject required technologies
-		.pipe(gulpif(env === 'production', uglify()))
-		.pipe(gulp.dest(outputDir + '/js'))  //Place in dev folder
+		.pipe(gulpif(env === 'production', uglify()))  //Minify JavaScript
+		.pipe(gulp.dest(outputDir + '/js'))  //Place in ouput dir
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
+
+gulp.task('css', function() {
+	gulp.src(cssSrc)
+		.pipe(gulp.dest(outputDir + '/css'))  //Place in output dir
+		.pipe(connect.reload())  //Reload page to reflect changes
+});
+
 
 //Watch for any changes, update when dedected
 gulp.task('watch', function() {
 	gulp.watch(jsSrc, ['js']);
 	gulp.watch(htmlSrc, ['html']);
 	gulp.watch(dataSrc, ['json']);
+	gulp.watch(viewsSrc, ['views']);
+	gulp.watch(cssSrc, ['css']);
 });
 
 //Connect task for livereload server
@@ -75,4 +93,4 @@ gulp.task('connect', function() {
 });
 
 //Declare default task
-gulp.task('default', ['html', 'json', 'js', 'connect', 'watch']);
+gulp.task('default', ['html', 'views', 'css', 'json', 'js', 'connect', 'watch']);
