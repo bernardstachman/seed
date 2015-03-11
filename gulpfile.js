@@ -33,7 +33,7 @@ jsSrc = ['components/scripts/*.js', 'components/scripts/**/*.js'];
 dataSrc = ['componenets/data/*.json'];
 htmlSrc = ['builds/dev/*.html'];
 viewsSrc = ['builds/dev/views/*.html'];
-lessSrc = ['components/less/*.less', 'components/less/**/*.less'];
+lessSrc = ['builds/dev/less/bootstrap.less'];
 cssSrc = ['builds/dev/css/*.css'];
 
 // [Gulp tasks]
@@ -74,7 +74,9 @@ gulp.task('js', function() {
  
 gulp.task('less', function () {
 	gulp.src(lessSrc)
-		.pipe(less())
+	    .pipe(less({
+		    paths: [ path.join('build/dev/less', 'less', 'includes') ]
+	    }))
 		.pipe(gulp.dest(outputDir + '/css'))
 		.pipe(connect.reload());
 });
