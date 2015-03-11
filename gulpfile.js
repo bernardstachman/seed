@@ -7,13 +7,16 @@ var gulp = require('gulp'),
 	gulpif = require('gulp-if'),
 	uglify = require('gulp-uglify')
 	minifyJSON = require('gulp-jsonminify'),
-	minifyHTML = require('gulp-minify-html');
+	minifyHTML = require('gulp-minify-html'),
+	less = require('gulp-less'), 
+	path = require('path'); //gulp-less dependency
 
 //Declare variables
 var env,
 	jsSrc,
 	dataSrc,
 	htmlSrc,
+	lessSrc,
 	outputDir;
 
 //Create environment variable
@@ -30,6 +33,7 @@ jsSrc = ['components/scripts/*.js', 'components/scripts/**/*.js'];
 dataSrc = ['componenets/data/*.json'];
 htmlSrc = ['builds/dev/*.html'];
 viewsSrc = ['builds/dev/views/*.html'];
+lessSrc = ['components/less/*.less', 'components/less/**/*.less'];
 cssSrc = ['builds/dev/css/*.css'];
 
 // [Gulp tasks]
@@ -67,6 +71,13 @@ gulp.task('js', function() {
 		.pipe(gulp.dest(outputDir + '/js'))  //Place in ouput dir
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
+ 
+gulp.task('less', function () {
+	gulp.src(lessSrc)
+		.pipe(less())
+		.pipe(gulp.dest(outputDir + '/css'))
+		.pipe(connect.reload());
+});
 
 gulp.task('css', function() {
 	gulp.src(cssSrc)
@@ -74,13 +85,13 @@ gulp.task('css', function() {
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
 
-
 //Watch for any changes, update when dedected
 gulp.task('watch', function() {
 	gulp.watch(jsSrc, ['js']);
 	gulp.watch(htmlSrc, ['html']);
 	gulp.watch(dataSrc, ['json']);
 	gulp.watch(viewsSrc, ['views']);
+	gulp.watch(lessSrc, ['less']);
 	gulp.watch(cssSrc, ['css']);
 });
 
@@ -93,4 +104,4 @@ gulp.task('connect', function() {
 });
 
 //Declare default task
-gulp.task('default', ['html', 'views', 'css', 'json', 'js', 'connect', 'watch']);
+gulp.task('default', ['html', 'views', 'less', 'css', 'json', 'js', 'connect', 'watch']);
