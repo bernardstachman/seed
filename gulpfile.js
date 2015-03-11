@@ -8,6 +8,7 @@ var gulp = require('gulp'),
 	uglify = require('gulp-uglify')
 	minifyJSON = require('gulp-jsonminify'),
 	minifyHTML = require('gulp-minify-html'),
+	minifyCSS = require('gulp-minify-css'),
 	less = require('gulp-less'), 
 	path = require('path'); //gulp-less dependency
 
@@ -83,6 +84,7 @@ gulp.task('less', function () {
 
 gulp.task('css', function() {
 	gulp.src(cssSrc)
+		.pipe(gulpif(env === 'production', minifyCSS()))  //If in production, minify...		
 		.pipe(gulp.dest(outputDir + '/css'))  //Place in output dir
 		.pipe(connect.reload())  //Reload page to reflect changes
 });
