@@ -10,6 +10,7 @@ My seed project for future AngularJS web app development utilizing a gulp powere
 3. Bootstrap
 4. Firebase
 5. jQuery
+6. LESS
 
 ### Gulp plugins employed:
 
@@ -21,3 +22,4 @@ My seed project for future AngularJS web app development utilizing a gulp powere
 6. gulp-uglify
 7. gulp-html-minify
 8. gulp-jsonminify
+9. gulp-LESS
