@@ -15,6 +15,7 @@ var gulp = require('gulp'),
 //Declare variables
 var env,
 	jsSrc,
+	libSrc,
 	dataSrc,
 	htmlSrc,
 	viewsSrc,
@@ -33,7 +34,8 @@ if (env === 'dev') { //If env = def, we are in dev mode
 }
 
 // [Define sources]
-jsSrc = ['components/scripts/*.js', 'components/scripts/**/*.js'];
+jsSrc = ['components/scripts/*.js'];
+libSrc = ['components/scripts/lib/*.js'];
 dataSrc = ['components/data/*.json'];
 htmlSrc = ['components/*.html'];
 viewsSrc = ['components/views/*.html'];
@@ -67,11 +69,20 @@ gulp.task('json', function() {
 		.pipe(connect.reload());
 });
 
+//Process JavaScript Libraries
+gulp.task('lib', function() {
+	gulp.src(libSrc)
+//		.pipe(concat('lib.js'))  //Combine all scripts into lib.js
+		.pipe(gulpif(env === 'production', uglify()))  //Minify JavaScript
+		.pipe(gulp.dest(outputDir + '/js'))  //Place in ouput dir
+		.pipe(connect.reload());  //Reload page to reflect changes
+});
+
 //Process JavaScript
 gulp.task('js', function() {
 	gulp.src(jsSrc)
 		.pipe(concat('script.js'))  //Combine all scripts into script.js
-		.pipe(browserify())  //Inject required technologies
+		// .pipe(browserify())  //Inject required technologies
 		.pipe(gulpif(env === 'production', uglify()))  //Minify JavaScript
 		.pipe(gulp.dest(outputDir + '/js'))  //Place in ouput dir
 		.pipe(connect.reload());  //Reload page to reflect changes
@@ -119,10 +130,10 @@ gulp.task('connect', function() {
 		host: 'localhost',
 		livereload: {
 // 			enabled: true,
-			port: '80'			
+			port: '4002'			
 		}
 	});
 });
 
 //Declare default task
-gulp.task('default', ['html', 'views', 'less', 'css', 'json', 'js', 'img', 'connect', 'watch']);
+gulp.task('default', ['html', 'views', 'less', 'css', 'json', 'js', 'lib', 'img', 'connect', 'watch']);
